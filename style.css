@@ -1,0 +1,153 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Blackboard", sans-serif;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  background-color: #14273b;
+  color: #ffffff;
+  position: relative;
+}
+
+.playArea {
+  width: 62vw;
+  height: 85vh;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.board {
+  width: 50%;
+  height: 95%;
+  background-color: #3b3d53;
+  border-radius: 20px;
+  border: 4px solid rgb(92, 156, 240);
+  padding: 5px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.8), 0 6px 20px 0 rgba(0, 0, 0, 0.8);
+  margin-top: 50px;
+}
+
+.row {
+  width: 100%;
+  height: calc(100% / 3);
+  display: flex;
+}
+
+.row .cell {
+  width: calc(100% / 3);
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.row-1 .cell:not(:last-child),
+.row-2 .cell:not(:last-child) {
+  border-right: 4px solid rgb(92, 156, 240);
+  border-bottom: 4px solid rgb(92, 156, 240);
+}
+
+.row-1 .cell:last-child,
+.row-2 .cell:last-child {
+  border-bottom: 4px solid rgb(92, 156, 240);
+}
+
+.row-3 .cell:not(:last-child) {
+  border-right: 4px solid rgb(92, 156, 240);
+}
+
+@keyframes pop {
+  0% {
+    scale: 100%;
+  }
+  25% {
+    scale: 140%;
+  }
+  50% {
+    scale: 100%;
+  }
+  75% {
+    scale: 140%;
+  }
+  100% {
+    scale: 100%;
+  }
+}
+
+img {
+  width: 70%;
+  height: 70%;
+  display: none;
+}
+
+.winnerImg {
+  animation: pop 1.3s;
+}
+
+.reSet {
+  width: 100px;
+  height: 40px;
+  padding: 4px;
+  border-radius: 4px;
+  border: none;
+  font-size: medium;
+  font-weight: bold;
+  text-align: center;
+  background-color: rgb(92, 156, 240);
+  color: aliceblue;
+  margin-top: 30px;
+  cursor: pointer;
+}
+
+.winnerContainer {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 10;
+  display: none;
+}
+
+.container {
+  position: absolute;
+  width: 40%;
+  height: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.container div {
+  min-width: 40%;
+  height: 15%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container img {
+  width: 60px;
+  height: 60px;
+}
+
+.container h1 {
+  font-size: 30px;
+  font-weight: bold;
+  margin-top: 10px;
+}
