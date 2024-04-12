@@ -23,11 +23,11 @@ const bot = () => {
 const clickHandler = (e) => {
   console.log(e.target.firstElementChild);
   if (playerX) {
-    e.target.firstElementChild.src = "/assets/x.png";
+    e.target.firstElementChild.src = "/x.png";
     e.target.firstElementChild.name = "X";
     e.target.firstElementChild.style.display = "block";
   } else {
-    e.target.firstElementChild.src = "/assets/o.png";
+    e.target.firstElementChild.src = "/o.png";
     e.target.firstElementChild.name = "O";
     e.target.firstElementChild.style.display = "block";
   }
@@ -87,10 +87,10 @@ const disableCells = () => {
 const displayWinner = (winner) => {
   winnerContainer.style.display = "block";
   if (winner == "X") {
-    winnerX.src = "/assets/x.png";
+    winnerX.src = "/x.png";
     winnerX.style.display = "block";
   } else {
-    winnerO.src = "/assets/o.png";
+    winnerO.src = "/o.png";
     winnerO.style.display = "block";
   }
 };
