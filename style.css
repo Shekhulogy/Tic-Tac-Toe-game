@@ -181,7 +181,7 @@ img {
 
 @media screen and (min-width: 376px) and (max-width: 425px) {
   .playArea {
-    height: 55vh;
+    height: 50vh;
     width: 100vw;
   }
 
