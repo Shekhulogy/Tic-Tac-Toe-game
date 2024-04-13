@@ -10,15 +10,20 @@ let playerX = true;
 
 console.log(cells);
 
-const bot = () => {
-  const rand = 0;
-  const cell = cells[rand].firstElementChild.src;
-  for (rand; rand <= cells.length - 1; )
-    if (cell == "") {
-    } else {
-      rand = Math.floor(Math.random() * 9);
-    }
-};
+// const bot = () => {
+//   let rand = 0;
+//   const cell = cells[rand].firstElementChild;
+//   for (rand; rand <= cells.length - 1; rand = Math.floor(Math.random() * 9))
+//     if (cell == "") {
+//       if (playerX != true) {
+//         cell.src = "assets/zero.png";
+//         cell.name = "O";
+//       } else {
+//         cell.src = "assets/cross.png";
+//         cell.name = "X";
+//       }
+//     }
+// };
 
 const clickHandler = (e) => {
   console.log(e.target.firstElementChild);
@@ -33,7 +38,7 @@ const clickHandler = (e) => {
   }
   playerX = !playerX;
   checkWinner();
-  bot();
+  // bot();
 };
 
 cells.forEach((cell) => cell.addEventListener("click", clickHandler));
