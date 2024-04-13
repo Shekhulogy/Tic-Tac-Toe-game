@@ -166,14 +166,27 @@ img {
   }
 }
 
-@media screen and (min-width: 321px) and (max-width: 425px) {
+@media screen and (min-width: 321px) and (max-width: 375px) {
   .playArea {
     height: 65vh;
     width: 90vw;
   }
 
   .board {
-    width: 65%;
+    width: 75%;
+    height: 90%;
+    margin-top: 30px;
+  }
+}
+
+@media screen and (min-width: 376px) and (max-width: 425px) {
+  .playArea {
+    height: 70vh;
+    width: 90vw;
+  }
+
+  .board {
+    width: 70%;
     height: 90%;
     margin-top: 30px;
   }
