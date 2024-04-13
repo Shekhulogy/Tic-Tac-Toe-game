@@ -181,13 +181,13 @@ img {
 
 @media screen and (min-width: 376px) and (max-width: 425px) {
   .playArea {
-    height: 75vh;
+    height: 55vh;
     width: 100vw;
   }
 
   .board {
     width: 70%;
-    height: 90%;
+    height: 85%;
     margin-top: 30px;
   }
 }
