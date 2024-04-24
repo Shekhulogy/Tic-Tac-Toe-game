@@ -10,22 +10,23 @@ let playerX = true;
 
 console.log(cells);
 
-// const bot = () => {
-//   let rand = 0;
-//   const cell = cells[rand].firstElementChild;
-//   for (rand; rand <= cells.length - 1; rand = Math.floor(Math.random() * 9))
-//     if (cell == "") {
-//       if (playerX != true) {
-//         cell.src = "assets/zero.png";
-//         cell.name = "O";
-//       } else {
-//         cell.src = "assets/cross.png";
-//         cell.name = "X";
-//       }
-//     }
-// };
+const bot = async () => {
+  let rand = Math.floor(Math.random() * 9);
+  const cell = cells[rand].firstElementChild;
+  console.log(rand);
+  console.log(cell);
+  if (!cell.name) {
+    cell.name = "O";
+    cell.src = "assets/zero.png";
+    cell.style.display = "block";
+    playerX = !playerX;
+    checkWinner();
+  } else {
+    (await !checkTie()) ? bot() : console.log("draw");
+  }
+};
 
-const clickHandler = (e) => {
+const clickHandler = async (e) => {
   console.log(e.target.firstElementChild);
   if (playerX) {
     e.target.firstElementChild.src = "assets/cross.png";
@@ -37,8 +38,11 @@ const clickHandler = (e) => {
     e.target.firstElementChild.style.display = "block";
   }
   playerX = !playerX;
-  checkWinner();
-  // bot();
+  await checkWinner();
+  await checkTie();
+  setTimeout(() => {
+    bot();
+  }, 500);
 };
 
 cells.forEach((cell) => cell.addEventListener("click", clickHandler));
@@ -54,6 +58,7 @@ reset.addEventListener("click", (e) => {
   winnerX.style.display = "none";
   winnerO.style.display = "none";
   cells.forEach((cell) => cell.addEventListener("click", clickHandler));
+  winner = "tie";
 });
 
 newGame.addEventListener("click", (e) => {
@@ -68,6 +73,7 @@ newGame.addEventListener("click", (e) => {
   winnerO.style.display = "none";
   playerX = true;
   cells.forEach((cell) => cell.addEventListener("click", clickHandler));
+  winner = "tie";
 });
 
 winnerContainer.addEventListener("click", () => {
@@ -100,8 +106,9 @@ const displayWinner = (winner) => {
   }
 };
 
+let winner = "tie";
+
 const checkWinner = () => {
-  let winner;
   winPatterns.map((winPattern, i) => {
     const position_1 = cells[winPattern[0]].firstElementChild.name;
     const position_2 = cells[winPattern[1]].firstElementChild.name;
@@ -109,13 +116,10 @@ const checkWinner = () => {
 
     if (position_1 != "" && position_2 != "" && position_3 != "") {
       if (position_1 == position_2 && position_2 == position_3) {
-        console.log("winner");
         winPattern.map((winElement) => {
           cells[winElement].firstElementChild.classList.add("winnerImg");
         });
-
         disableCells();
-
         winner = position_1;
         winnerAudio.play();
         setTimeout(() => {
@@ -125,4 +129,33 @@ const checkWinner = () => {
       }
     }
   });
+};
+
+const displayTie = () => {
+  winnerContainer.style.display = "block";
+  winnerX.src = "assets/cross.png";
+  winnerO.src = "assets/zero.png";
+  winnerX.style.display = "block";
+  winnerO.style.display = "block";
+  document.querySelector(".result").innerHTML = "Game Tie";
+};
+
+const checkTie = () => {
+  let count = 0;
+  console.log(winner);
+  cells.forEach((cell) => {
+    if (cell.firstElementChild.name) {
+      count++;
+    }
+  });
+  if (count == 9 && winner == "tie") {
+    navigator.vibrate(200);
+    setTimeout(() => {
+      displayTie();
+    }, 1200);
+
+    return true;
+  } else {
+    return false;
+  }
 };
