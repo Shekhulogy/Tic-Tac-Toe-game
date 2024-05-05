@@ -5,12 +5,14 @@ const winnerContainer = document.querySelector("#winnerContainer");
 const winnerAudio = document.querySelector("#winnerAudio");
 const winnerX = document.querySelector("#X");
 const winnerO = document.querySelector("#O");
+const pop_1 = document.querySelector("#pop-1");
+const pop_2 = document.querySelector("#pop-2");
 
 let playerX = true;
 
 console.log(cells);
 
-const bot = async () => {
+const bot = () => {
   let rand = Math.floor(Math.random() * 9);
   const cell = cells[rand].firstElementChild;
   console.log(rand);
@@ -19,14 +21,17 @@ const bot = async () => {
     cell.name = "O";
     cell.src = "assets/zero.png";
     cell.style.display = "block";
+    pop_2.play();
     playerX = !playerX;
     checkWinner();
   } else {
-    (await !checkTie()) ? bot() : console.log("draw");
+    if (!checkTie()) {
+      bot();
+    }
   }
 };
 
-const clickHandler = async (e) => {
+const clickHandler = (e) => {
   console.log(e.target.firstElementChild);
   if (playerX) {
     e.target.firstElementChild.src = "assets/cross.png";
@@ -37,9 +42,10 @@ const clickHandler = async (e) => {
     e.target.firstElementChild.name = "O";
     e.target.firstElementChild.style.display = "block";
   }
+  pop_1.play();
   playerX = !playerX;
-  await checkWinner();
-  await checkTie();
+  checkWinner();
+  checkTie();
   setTimeout(() => {
     bot();
   }, 500);
@@ -97,6 +103,7 @@ const disableCells = () => {
 
 const displayWinner = (winner) => {
   winnerContainer.style.display = "block";
+  document.querySelector(".result").innerHTML = "Wins";
   if (winner == "X") {
     winnerX.src = "assets/cross.png";
     winnerX.style.display = "block";
@@ -126,6 +133,7 @@ const checkWinner = () => {
           displayWinner(winner);
         }, 1200);
         console.log("winner ", winner);
+        return true;
       }
     }
   });
@@ -148,12 +156,15 @@ const checkTie = () => {
       count++;
     }
   });
+
   if (count == 9 && winner == "tie") {
     navigator.vibrate(200);
     setTimeout(() => {
       displayTie();
     }, 1200);
 
+    return true;
+  } else if (winner == "X" || winner == "O") {
     return true;
   } else {
     return false;
