@@ -8,6 +8,7 @@
 html,
 body {
   height: 100vh;
+  max-height: -webkit-fill-available;
   background-color: #14273b;
   color: #ffffff;
 }
