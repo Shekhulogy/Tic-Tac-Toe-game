@@ -1,6 +1,6 @@
 const cells = document.querySelectorAll(".cell");
-const reset = document.querySelector("#reSet");
-const newGame = document.querySelector("#newGame");
+const resetBtn = document.querySelector("#reSet");
+const newGameBtns = document.querySelectorAll("#newGame");
 const winnerContainer = document.querySelector("#winnerContainer");
 const winnerAudio = document.querySelector("#winnerAudio");
 const winnerX = document.querySelector("#X");
@@ -29,6 +29,7 @@ modeButtons.forEach((button) => {
     scoreContainer.style.display = "flex";
     gameModeModal.style.display = "none";
     gameMode = button.innerHTML;
+    resetGame();
     console.log(gameMode);
     if (gameMode === "Single") {
       oScore.style.display = "none";
@@ -79,20 +80,20 @@ const clickHandler = (e) => {
   }
 
   playerX = !playerX;
-  checkWinner();
 
   if (gameMode == "Single") {
     setTimeout(() => {
       bot();
     }, 500);
   } else {
+    checkWinner();
     checkTie();
   }
 };
 
 cells.forEach((cell) => cell.addEventListener("click", clickHandler));
 
-reset.addEventListener("click", () => {
+const resetGame = () => {
   cells.forEach((cell) => {
     cell.firstElementChild.src = "";
     cell.firstElementChild.name = "";
@@ -108,25 +109,29 @@ reset.addEventListener("click", () => {
   oScore.lastElementChild.innerHTML = "0";
   computerScore.lastElementChild.innerHTML = "0";
   tieScore.lastElementChild.innerHTML = "0";
-});
+};
+
+resetBtn.addEventListener("click", resetGame);
 
 changeMode.addEventListener("click", () => {
   gameModeModal.style.display = "block";
 });
 
-newGame.addEventListener("click", () => {
-  cells.forEach((cell) => {
-    cell.firstElementChild.src = "";
-    cell.firstElementChild.name = "";
-    cell.firstElementChild.style.display = "none";
-    cell.firstElementChild.classList.remove("winnerImg");
+newGameBtns.forEach((newGame) => {
+  newGame.addEventListener("click", () => {
+    cells.forEach((cell) => {
+      cell.firstElementChild.src = "";
+      cell.firstElementChild.name = "";
+      cell.firstElementChild.style.display = "none";
+      cell.firstElementChild.classList.remove("winnerImg");
+    });
+    winnerContainer.style.display = "none";
+    winnerX.style.display = "none";
+    winnerO.style.display = "none";
+    playerX = true;
+    cells.forEach((cell) => cell.addEventListener("click", clickHandler));
+    winner = "tie";
   });
-  winnerContainer.style.display = "none";
-  winnerX.style.display = "none";
-  winnerO.style.display = "none";
-  playerX = true;
-  cells.forEach((cell) => cell.addEventListener("click", clickHandler));
-  winner = "tie";
 });
 
 winnerContainer.addEventListener("click", () => {
