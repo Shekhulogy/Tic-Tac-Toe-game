@@ -7,14 +7,23 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="winnerContainer" id="winnerContainer">
+    <div class="modal" id="game-mode-modal">
+      <div class="container">
+        <h1>Select Mode</h1>
+        <div class="button-container">
+          <button class="button mode-btn">Single</button>
+          <button class="button mode-btn">Double</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal" id="winnerContainer">
       <div class="container">
         <div>
           <img src="" id="X" />
           <img src="" id="O" />
         </div>
         <h1 class="result">Wins</h1>
-        <button class="reSet" id="newGame">New Game</button>
+        <button class="button" id="newGame">New Game</button>
       </div>
     </div>
     <audio src="assets/winnerAudio.mp3" id="winnerAudio"></audio>
@@ -57,7 +66,28 @@
           </div>
         </div>
       </div>
-      <button class="reSet" id="reSet">Reset</button>
+      <div class="score-container">
+        <div class="player" id="player-X">
+          <h2>Player-X</h2>
+          <h3>0</h3>
+        </div>
+        <div class="player" id="tie">
+          <h2>tie</h2>
+          <h3>0</h3>
+        </div>
+        <div class="player" id="player-O">
+          <h2>Player-O</h2>
+          <h3>0</h3>
+        </div>
+        <div class="player" id="computer">
+          <h2>Computer</h2>
+          <h3>0</h3>
+        </div>
+      </div>
+      <div>
+        <button class="button" id="reSet">Reset</button>
+        <button class="button" id="change-mode">Mode</button>
+      </div>
     </div>
     <script src="script.js"></script>
   </body>

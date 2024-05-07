@@ -1,29 +1,59 @@
 const cells = document.querySelectorAll(".cell");
-const reset = document.getElementById("reSet");
+const reset = document.querySelector("#reSet");
 const newGame = document.querySelector("#newGame");
 const winnerContainer = document.querySelector("#winnerContainer");
 const winnerAudio = document.querySelector("#winnerAudio");
 const winnerX = document.querySelector("#X");
 const winnerO = document.querySelector("#O");
-const pop_1 = document.querySelector("#pop-1");
-const pop_2 = document.querySelector("#pop-2");
+const pop_1Audio = document.querySelector("#pop-1");
+const pop_2Audio = document.querySelector("#pop-2");
+const gameModeModal = document.querySelector("#game-mode-modal");
+const modeButtons = document.querySelectorAll(".mode-btn");
+const xScore = document.querySelector("#player-X");
+const oScore = document.querySelector("#player-O");
+const computerScore = document.querySelector("#computer");
+const tieScore = document.querySelector("#tie");
+const changeMode = document.querySelector("#change-mode");
+const scoreContainer = document.querySelector(".score-container");
 
 let playerX = true;
+let gameMode;
 
-console.log(cells);
+window.onload = () => {
+  gameModeModal.style.display = "block";
+  scoreContainer.style.display = "none";
+};
+
+modeButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    scoreContainer.style.display = "flex";
+    gameModeModal.style.display = "none";
+    gameMode = button.innerHTML;
+    console.log(gameMode);
+    if (gameMode === "Single") {
+      oScore.style.display = "none";
+      computerScore.style.display = "block";
+    } else {
+      oScore.style.display = "block";
+      computerScore.style.display = "none";
+    }
+  });
+});
 
 const bot = () => {
   let rand = Math.floor(Math.random() * 9);
   const cell = cells[rand].firstElementChild;
-  console.log(rand);
-  console.log(cell);
   if (!cell.name) {
     cell.name = "O";
     cell.src = "assets/zero.png";
     cell.style.display = "block";
-    pop_2.play();
+    pop_2Audio.play();
     playerX = !playerX;
     checkWinner();
+    if (winner == "O") {
+      computerScore.lastElementChild.innerHTML =
+        parseInt(computerScore.lastElementChild.innerHTML) + 1;
+    }
   } else {
     if (!checkTie()) {
       bot();
@@ -32,7 +62,6 @@ const bot = () => {
 };
 
 const clickHandler = (e) => {
-  console.log(e.target.firstElementChild);
   if (playerX) {
     e.target.firstElementChild.src = "assets/cross.png";
     e.target.firstElementChild.name = "X";
@@ -42,18 +71,28 @@ const clickHandler = (e) => {
     e.target.firstElementChild.name = "O";
     e.target.firstElementChild.style.display = "block";
   }
-  pop_1.play();
+
+  if (playerX) {
+    pop_1Audio.play();
+  } else {
+    pop_2Audio.play();
+  }
+
   playerX = !playerX;
   checkWinner();
-  checkTie();
-  setTimeout(() => {
-    bot();
-  }, 500);
+
+  if (gameMode == "Single") {
+    setTimeout(() => {
+      bot();
+    }, 500);
+  } else {
+    checkTie();
+  }
 };
 
 cells.forEach((cell) => cell.addEventListener("click", clickHandler));
 
-reset.addEventListener("click", (e) => {
+reset.addEventListener("click", () => {
   cells.forEach((cell) => {
     cell.firstElementChild.src = "";
     cell.firstElementChild.name = "";
@@ -65,9 +104,17 @@ reset.addEventListener("click", (e) => {
   winnerO.style.display = "none";
   cells.forEach((cell) => cell.addEventListener("click", clickHandler));
   winner = "tie";
+  xScore.lastElementChild.innerHTML = "0";
+  oScore.lastElementChild.innerHTML = "0";
+  computerScore.lastElementChild.innerHTML = "0";
+  tieScore.lastElementChild.innerHTML = "0";
 });
 
-newGame.addEventListener("click", (e) => {
+changeMode.addEventListener("click", () => {
+  gameModeModal.style.display = "block";
+});
+
+newGame.addEventListener("click", () => {
   cells.forEach((cell) => {
     cell.firstElementChild.src = "";
     cell.firstElementChild.name = "";
@@ -132,8 +179,14 @@ const checkWinner = () => {
         setTimeout(() => {
           displayWinner(winner);
         }, 1200);
-        console.log("winner ", winner);
-        return true;
+        if (winner == "X") {
+          xScore.lastElementChild.innerHTML =
+            parseInt(xScore.lastElementChild.innerHTML) + 1;
+          console.log(xScore.lastElementChild.innerHTML);
+        } else if (winner == "O") {
+          oScore.lastElementChild.innerHTML =
+            parseInt(oScore.lastElementChild.innerHTML) + 1;
+        }
       }
     }
   });
@@ -150,7 +203,6 @@ const displayTie = () => {
 
 const checkTie = () => {
   let count = 0;
-  console.log(winner);
   cells.forEach((cell) => {
     if (cell.firstElementChild.name) {
       count++;
@@ -162,7 +214,8 @@ const checkTie = () => {
     setTimeout(() => {
       displayTie();
     }, 1200);
-
+    tieScore.lastElementChild.innerHTML =
+      parseInt(tieScore.lastElementChild.innerHTML) + 1;
     return true;
   } else if (winner == "X" || winner == "O") {
     return true;
