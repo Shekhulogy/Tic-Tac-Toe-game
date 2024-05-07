@@ -213,7 +213,7 @@ const checkTie = () => {
     navigator.vibrate(200);
     setTimeout(() => {
       displayTie();
-    }, 1200);
+    }, 500);
     tieScore.lastElementChild.innerHTML =
       parseInt(tieScore.lastElementChild.innerHTML) + 1;
     return true;
