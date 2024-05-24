@@ -15,9 +15,23 @@ const computerScore = document.querySelector("#computer");
 const tieScore = document.querySelector("#tie");
 const changeMode = document.querySelector("#change-mode");
 const scoreContainer = document.querySelector(".score-container");
+const playerModal = document.querySelector("#player-modal");
+const playerButtons = document.querySelectorAll(".player-btn");
 
 let playerX = true;
+let winner = "tie";
 let gameMode;
+
+const winPatterns = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  [0, 4, 8],
+  [2, 4, 6],
+];
 
 window.onload = () => {
   gameModeModal.style.display = "block";
@@ -37,28 +51,162 @@ modeButtons.forEach((button) => {
     } else {
       oScore.style.display = "block";
       computerScore.style.display = "none";
+      playerModal.style.display = "block";
     }
   });
 });
 
+playerButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    playerModal.style.display = "none";
+    playerX = button.innerHTML === "Player X" ? true : false;
+    console.log(playerX);
+  });
+});
+
+const evaluateBoard = () => {
+  for (const pattern of winPatterns) {
+    const [a, b, c] = pattern;
+    if (
+      cells[a].firstElementChild.name &&
+      cells[a].firstElementChild.name === cells[b].firstElementChild.name &&
+      cells[a].firstElementChild.name === cells[c].firstElementChild.name
+    ) {
+      if (cells[a].firstElementChild.name === "X") {
+        return -10; // X is the player, so it's a negative score for the bot
+      } else if (cells[a].firstElementChild.name === "O") {
+        return 10; // O is the bot, so it's a positive score
+      }
+    }
+  }
+
+  // Check for tie
+  let isTie = true;
+  cells.forEach((cell) => {
+    if (!cell.firstElementChild.name) {
+      isTie = false;
+    }
+  });
+
+  if (isTie) {
+    return 0;
+  }
+
+  return null; // Game is still going on
+};
+
+// Minimax function to determine the best move for the bot
+const minimax = (isMaximizing) => {
+  const score = evaluateBoard();
+  if (score !== null) {
+    return score;
+  }
+
+  if (isMaximizing) {
+    let bestScore = -Infinity;
+    cells.forEach((cell, index) => {
+      if (!cell.firstElementChild.name) {
+        cell.firstElementChild.name = "O";
+        let currentScore = minimax(false);
+        cell.firstElementChild.name = "";
+        bestScore = Math.max(currentScore, bestScore);
+      }
+    });
+    return bestScore;
+  } else {
+    let bestScore = Infinity;
+    cells.forEach((cell, index) => {
+      if (!cell.firstElementChild.name) {
+        cell.firstElementChild.name = "X";
+        let currentScore = minimax(true);
+        cell.firstElementChild.name = "";
+        bestScore = Math.min(currentScore, bestScore);
+      }
+    });
+    return bestScore;
+  }
+};
+
+// Bot move function to determine and make the best move using the Minimax algorithm
 const bot = () => {
-  let rand = Math.floor(Math.random() * 9);
-  const cell = cells[rand].firstElementChild;
-  if (!cell.name) {
+  // Check if bot can win
+  for (let i = 0; i < cells.length; i++) {
+    if (!cells[i].firstElementChild.name) {
+      cells[i].firstElementChild.name = "O";
+      if (evaluateBoard() === 10) {
+        cells[i].firstElementChild.src = "assets/zero.png";
+        cells[i].firstElementChild.style.display = "block";
+        pop_2Audio.play();
+        playerX = !playerX;
+        checkWinner();
+        if (winner == "O") {
+          computerScore.lastElementChild.innerHTML =
+            parseInt(computerScore.lastElementChild.innerHTML) + 1;
+        }
+        return;
+      }
+      cells[i].firstElementChild.name = "";
+    }
+  }
+
+  // Block opponent's win
+  for (let i = 0; i < cells.length; i++) {
+    if (!cells[i].firstElementChild.name) {
+      cells[i].firstElementChild.name = "X";
+      if (evaluateBoard() === -10) {
+        cells[i].firstElementChild.name = "O";
+        cells[i].firstElementChild.src = "assets/zero.png";
+        cells[i].firstElementChild.style.display = "block";
+        pop_2Audio.play();
+        playerX = !playerX;
+        checkWinner();
+        return;
+      }
+      cells[i].firstElementChild.name = "";
+    }
+  }
+
+  // Choose center if available
+  // if (!cells[4].firstElementChild.name) {
+  //   cells[4].firstElementChild.name = "O";
+  //   cells[4].firstElementChild.src = "assets/zero.png";
+  //   cells[4].firstElementChild.style.display = "block";
+  //   pop_2Audio.play();
+  //   playerX = !playerX;
+  //   checkWinner();
+  //   return;
+  // }
+
+  // Choose a corner if available
+  // const corners = [0, 2, 6, 8];
+  // for (let i of corners) {
+  //   if (!cells[i].firstElementChild.name) {
+  //     cells[i].firstElementChild.name = "O";
+  //     cells[i].firstElementChild.src = "assets/zero.png";
+  //     cells[i].firstElementChild.style.display = "block";
+  //     pop_2Audio.play();
+  //     playerX = !playerX;
+  //     checkWinner();
+  //     return;
+  //   }
+  // }
+
+  // Choose a random move
+  let availableCells = [];
+  cells.forEach((cell, index) => {
+    if (!cell.firstElementChild.name) {
+      availableCells.push(index);
+    }
+  });
+  if (availableCells.length > 0) {
+    const rand = Math.floor(Math.random() * availableCells.length);
+    const cell = cells[availableCells[rand]].firstElementChild;
     cell.name = "O";
     cell.src = "assets/zero.png";
     cell.style.display = "block";
     pop_2Audio.play();
     playerX = !playerX;
     checkWinner();
-    if (winner == "O") {
-      computerScore.lastElementChild.innerHTML =
-        parseInt(computerScore.lastElementChild.innerHTML) + 1;
-    }
-  } else {
-    if (!checkTie()) {
-      bot();
-    }
   }
 };
 
@@ -67,15 +215,11 @@ const clickHandler = (e) => {
     e.target.firstElementChild.src = "assets/cross.png";
     e.target.firstElementChild.name = "X";
     e.target.firstElementChild.style.display = "block";
+    pop_1Audio.play();
   } else {
     e.target.firstElementChild.src = "assets/zero.png";
     e.target.firstElementChild.name = "O";
     e.target.firstElementChild.style.display = "block";
-  }
-
-  if (playerX) {
-    pop_1Audio.play();
-  } else {
     pop_2Audio.play();
   }
 
@@ -85,6 +229,7 @@ const clickHandler = (e) => {
     setTimeout(() => {
       bot();
     }, 500);
+    checkTie();
   } else {
     checkWinner();
     checkTie();
@@ -138,17 +283,6 @@ winnerContainer.addEventListener("click", () => {
   winnerContainer.style.display = "none";
 });
 
-const winPatterns = [
-  [0, 1, 2],
-  [3, 4, 5],
-  [6, 7, 8],
-  [0, 3, 6],
-  [1, 4, 7],
-  [2, 5, 8],
-  [0, 4, 8],
-  [2, 4, 6],
-];
-
 const disableCells = () => {
   cells.forEach((cell) => cell.removeEventListener("click", clickHandler));
 };
@@ -165,10 +299,8 @@ const displayWinner = (winner) => {
   }
 };
 
-let winner = "tie";
-
 const checkWinner = () => {
-  winPatterns.map((winPattern, i) => {
+  winPatterns.map((winPattern) => {
     const position_1 = cells[winPattern[0]].firstElementChild.name;
     const position_2 = cells[winPattern[1]].firstElementChild.name;
     const position_3 = cells[winPattern[2]].firstElementChild.name;
